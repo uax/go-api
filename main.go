@@ -10,8 +10,7 @@ import (
 func main() {
 	router := gin.Default()
 	router.Use(middleware.CORS)
-	router.GET("/", func(ctx *gin.Context) {
-		fmt.Println("hello,api")
+	router.GET("/", middleware.JWTMiddleware(), func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{"code": 200, "msg": "hello,api"})
 	})
 	router.POST("/auth/login", authHandle)
@@ -36,7 +35,7 @@ func authHandle(c *gin.Context) {
 	}
 	fmt.Println(user)
 	if user.Name == "noah" {
-		tokenString, _ := middleware.GenToken(381479)
+		tokenString, _ := middleware.GenerateToken(381479)
 		c.JSON(http.StatusOK, gin.H{
 			"code": 2000,
 			"msg":  "ok",
