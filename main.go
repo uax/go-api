@@ -8,13 +8,17 @@ import (
 )
 
 func main() {
-	router := gin.Default()
-	router.Use(middleware.CORS)
-	router.GET("/", middleware.JWTMiddleware(), func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{"code": 200, "msg": "hello,api"})
-	})
+	gin.SetMode(gin.DebugMode)
+	router := gin.New()
+	router.SetTrustedProxies(nil)
+	auth := router.Group("/auth").Use(middleware.JWTMiddleware())
+	{
+		auth.GET("/", func(ctx *gin.Context) {
+			ctx.JSON(200, gin.H{"code": 200, "msg": "hello,api"})
+		})
+		auth.GET("/auth/info", middleware.JWTMiddleware(), getInfo)
+	}
 	router.POST("/auth/login", authHandle)
-	router.GET("/auth/info", middleware.JWTMiddleware(), getInfo)
 	router.Run(":8000")
 }
 
