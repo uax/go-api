@@ -1,7 +1,9 @@
 package main
 
 import (
+	_ "api/database"
 	"api/middleware"
+	"api/router"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -9,17 +11,19 @@ import (
 
 func main() {
 	gin.SetMode(gin.DebugMode)
-	router := gin.New()
-	router.SetTrustedProxies(nil)
-	auth := router.Group("/auth").Use(middleware.JWTMiddleware())
-	{
-		auth.GET("/", func(ctx *gin.Context) {
-			ctx.JSON(200, gin.H{"code": 200, "msg": "hello,api"})
-		})
-		auth.GET("/auth/info", middleware.JWTMiddleware(), getInfo)
-	}
-	router.POST("/auth/login", authHandle)
+	router := router.InitRouter()
 	router.Run(":8000")
+	//router := gin.New()
+	//router.SetTrustedProxies(nil)
+	//auth := router.Group("/auth").Use(middleware.JWTMiddleware())
+	//{
+	//	auth.GET("/", func(ctx *gin.Context) {
+	//		ctx.JSON(200, gin.H{"code": 200, "msg": "hello,api"})
+	//	})
+	//	auth.GET("/auth/info", middleware.JWTMiddleware(), getInfo)
+	//}
+	//router.POST("/auth/login", authHandle)
+	//router.Run(":8000")
 }
 
 type User struct {
