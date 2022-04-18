@@ -9,14 +9,15 @@ import (
 func InitRouter() *gin.Engine {
 	router := gin.New()
 	router.SetTrustedProxies(nil)
-	auth := router.Group("/auth").Use(middleware.JWTMiddleware())
+	auth := router.Group("/").Use(middleware.JWTMiddleware())
 	{
 		auth.GET("/", func(ctx *gin.Context) {
 			ctx.JSON(200, gin.H{"code": 200, "msg": "hello,api"})
 		})
+		auth.GET("home", controllers.Home)
 		//auth.GET("/auth/info", middleware.JWTMiddleware(), getInfo)
 	}
-	//router.POST("/auth/login", authHandle)
+	router.POST("/auth/login", controllers.Login)
 	router.GET("users", controllers.Users)
 	return router
 	//router.Run(":8000")

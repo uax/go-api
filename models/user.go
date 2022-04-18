@@ -4,6 +4,7 @@ import "api/database"
 
 type User struct {
 	ID       int64  `json:"id"`
+	Openid   string `json:"openid"`
 	Name     string `json:"username"`
 	Password string `json:"password"`
 }
@@ -27,4 +28,12 @@ func (user *User) Users() (users []User, err error) {
 		return
 	}
 	return
+}
+
+func (User) UserByOpenID(openid string) (u User, err error) {
+	database.Eloquent.Debug().Where("openid = ?", openid).First(&u)
+	if err != nil {
+		return User{}, err
+	}
+	return u, nil
 }
