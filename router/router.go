@@ -9,11 +9,14 @@ import (
 func InitRouter() *gin.Engine {
 	router := gin.New()
 	router.SetTrustedProxies(nil)
+	router.GET("/books/:id", controllers.BookList)
+
 	auth := router.Group("/auth").Use(middleware.JWTMiddleware())
 	{
 		auth.GET("/", func(ctx *gin.Context) {
 			ctx.JSON(200, gin.H{"code": 200, "msg": "hello,api"})
 		})
+		auth.GET("/books/:id", controllers.BookList)
 		//auth.GET("/auth/info", middleware.JWTMiddleware(), getInfo)
 	}
 	//router.POST("/auth/login", authHandle)
