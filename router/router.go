@@ -16,10 +16,10 @@ func InitRouter() *gin.Engine {
 		auth.GET("/", func(ctx *gin.Context) {
 			ctx.JSON(200, gin.H{"code": 200, "msg": "hello,api"})
 		})
-		auth.GET("/books/:id", controllers.BookList)
+		auth.GET("home", controllers.Home)
 		//auth.GET("/auth/info", middleware.JWTMiddleware(), getInfo)
 	}
-	//router.POST("/auth/login", authHandle)
+	router.POST("/auth/login", controllers.Login)
 	router.GET("users", controllers.Users)
 	return router
 	//router.Run(":8000")
