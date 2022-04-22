@@ -3,23 +3,24 @@ package controllers
 import (
 	DB "api/database"
 	model "api/models"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 func BookList(c *gin.Context) {
-
-	fmt.Println(c.Param("id"))
-	bookId := c.Param("id")
-	//res := model.Book{}.List(bookId)
-	res := DB.Eloquent.Debug().Where("book_id=?", bookId).Find(&model.Book{})
-	// 获取全部匹配的记录
-	//db.Where("name <> ?", "jinzhu").Find(&users)
-	// SELECT * FROM users WHERE name <> 'jinzhu';
+	bookId, _ := strconv.Atoi(c.Param("id")) // c.Param("id")
+	res := DB.Eloquent.Debug().Where("category_id = ? AND status = 1", bookId).Order("id desc").Find(&[]model.Book{})
+	if res.Error != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 500,
+			"msg":  res.Error.Error(),
+			"data": []model.Book{},
+		})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"code": 200,
-		"data": res,
+		"data": res.Value,
 	})
-	return
 }

@@ -24,3 +24,12 @@ func Users(c *gin.Context) {
 		"data": result,
 	})
 }
+
+func GetInfo(c *gin.Context) {
+	uid := c.MustGet("uid")
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  "ok",
+		"uid":  uid,
+	})
+}

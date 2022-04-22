@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "api/database"
+	//_ "api/database"
 	"api/middleware"
 	"api/router"
 	"fmt"
@@ -13,17 +13,6 @@ func main() {
 	gin.SetMode(gin.DebugMode)
 	router := router.InitRouter()
 	router.Run(":8000")
-	//router := gin.New()
-	//router.SetTrustedProxies(nil)
-	//auth := router.Group("/auth").Use(middleware.JWTMiddleware())
-	//{
-	//	auth.GET("/", func(ctx *gin.Context) {
-	//		ctx.JSON(200, gin.H{"code": 200, "msg": "hello,api"})
-	//	})
-	//	auth.GET("/auth/info", middleware.JWTMiddleware(), getInfo)
-	//}
-	//router.POST("/auth/login", authHandle)
-	//router.Run(":8000")
 }
 
 type User struct {
@@ -56,13 +45,4 @@ func authHandle(c *gin.Context) {
 		"msg":  "登录失败",
 	})
 	return
-}
-
-func getInfo(c *gin.Context) {
-	uid := c.MustGet("uid")
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "ok",
-		"uid":  uid,
-	})
 }
