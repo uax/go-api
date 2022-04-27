@@ -1,16 +1,17 @@
-package controllers
+package handles
 
 import (
-	DB "api/database"
+	"api/db"
 	model "api/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 )
 
-func BookList(c *gin.Context) {
+func GetList(c *gin.Context) {
 	categoryId, _ := strconv.Atoi(c.Param("id"))
-	var p DB.Page
+
+	var p db.Page
 	if c.ShouldBindQuery(&p) != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 500,
@@ -29,7 +30,7 @@ func BookList(c *gin.Context) {
 	}
 
 	var books []model.Book
-	if err := DB.Eloquent.Where("category_id = ? AND status = 1", categoryId).Limit(p.PageSize).Offset((p.PageNum - 1) * p.PageSize).Order("id desc").Find(&books).Error; err != nil {
+	if err := db.ORM.Where("category_id = ? AND status = 1", categoryId).Limit(p.PageSize).Offset((p.PageNum - 1) * p.PageSize).Order("id desc").Find(&books).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 500,
 			"msg":  err.Error(),
@@ -37,10 +38,10 @@ func BookList(c *gin.Context) {
 		return
 	}
 
-	var total int
-	DB.Eloquent.Model(&model.Book{}).Where("category_id = ? AND status = 1", categoryId).Count(&total)
-	pages := total / p.PageSize
-	if total%p.PageSize != 0 {
+	var total int64
+	db.ORM.Model(&model.Book{}).Where("category_id = ? AND status = 1", categoryId).Count(&total)
+	pages := int(total) / p.PageSize
+	if int(total)%p.PageSize != 0 {
 		pages++
 	}
 	c.JSON(200, gin.H{

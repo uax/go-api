@@ -1,4 +1,4 @@
-package controllers
+package handles
 
 import (
 	"github.com/gin-gonic/gin"
@@ -9,6 +9,6 @@ import (
 func Home(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": 200,
-		"data": "lists",
+		"data": "home",
 	})
 }

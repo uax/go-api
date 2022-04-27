@@ -1,6 +1,8 @@
-package controllers
+package handles
 
 import (
+	. "api/config"
+	"api/db"
 	"api/middleware"
 	"api/models"
 	"fmt"
@@ -22,21 +24,37 @@ func Login(c *gin.Context) {
 	wc := wechat.NewWechat()
 	memory := cache.NewMemory()
 	cfg := &miniConfig.Config{
-		AppID:     "wx79ceafb3aa8bd583",
-		AppSecret: "b825391c825400c531716c74dcd7110e",
+		AppID:     ConfAll.MiniAPP.AppId,
+		AppSecret: ConfAll.MiniAPP.AppSecret,
 		Cache:     memory,
 	}
 	auth := wc.GetMiniProgram(cfg).GetAuth()
-	result, _ := auth.Code2Session(json.Code)
+	result, err := auth.Code2Session(json.Code)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 500,
+			"msg":  err.Error(),
+		})
+		return
+	}
 	if result.ErrCode != 0 {
 		fmt.Println("error" + result.ErrMsg)
+		return
 	}
 	var user models.User
-	user, _ = models.User.UserByOpenID(user, result.OpenID)
-	tokenString, _ := middleware.GenerateToken(user.ID)
+	res := db.ORM.Where("openid = ?", result.OpenID).First(&user)
+	if res.RowsAffected > 0 {
+		tokenString, _ := middleware.GenerateToken(user.ID)
+		c.JSON(http.StatusOK, gin.H{
+			"code":  200,
+			"msg":   "ok",
+			"token": tokenString,
+		})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
-		"code":  2000,
-		"msg":   "ok",
-		"token": tokenString,
+		"code": 500,
+		"msg":  res.Error.Error(),
 	})
+	return
 }

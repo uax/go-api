@@ -1,6 +1,8 @@
 package models
 
-import "api/database"
+import (
+	"api/db"
+)
 
 type User struct {
 	ID       int64  `json:"id"`
@@ -13,7 +15,7 @@ var Users []User
 
 //Insert insert user
 func (user User) Insert() (id int64, err error) {
-	result := database.Eloquent.Create(&user)
+	result := db.ORM.Create(&user)
 	id = user.ID
 	if result.Error != nil {
 		err = result.Error
@@ -24,14 +26,15 @@ func (user User) Insert() (id int64, err error) {
 
 //Users get users
 func (user *User) Users() (users []User, err error) {
-	if err = database.Eloquent.Find(&users).Error; err != nil {
+	if err = db.ORM.Find(&users).Error; err != nil {
 		return
 	}
 	return
 }
 
 func (User) UserByOpenID(openid string) (u User, err error) {
-	database.Eloquent.Debug().Where("openid = ?", openid).First(&u)
+	db.ORM.Debug().Where("openid = ?", openid).First(&u)
+	//database.Eloquent.Debug().Where("openid = ?", openid).First(&u)
 	if err != nil {
 		return User{}, err
 	}

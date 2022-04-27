@@ -1,0 +1,21 @@
+{
+  "MiniAPP": {
+    "AppID": "xxx",
+    "AppSecret": "xxx",
+    "Token": "xxx",
+    "EncodingAESKey": "xxx"
+  },
+  "Db": {
+    "Address": "127.0.0.1",
+    "DbName": "api",
+    "User": "root",
+    "Password": "526937",
+    "Port": 3306
+  },
+  "Email": {
+    "User": "noah@zixi.net",
+    "Pass": "xxx",
+    "Host": "smtp.qq.com",
+    "Port": 25
+  }
+}

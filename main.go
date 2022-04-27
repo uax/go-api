@@ -1,13 +1,29 @@
 package main
 
 import (
+	. "api/config"
+	"api/db"
 	//_ "api/database"
 	"api/middleware"
 	"api/router"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
+
+func init() {
+	// 初始化配置文件
+	err := LoadConfig()
+	if err != nil {
+		log.Fatal("初始化错误:", err)
+	}
+
+	// 初始化数据库连接池
+	if err = db.InitDb(ConfAll.DB); err != nil {
+		log.Fatal("初始化错误:", err)
+	}
+}
 
 func main() {
 	gin.SetMode(gin.DebugMode)

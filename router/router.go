@@ -1,7 +1,7 @@
 package router
 
 import (
-	"api/controllers"
+	"api/handles"
 	"api/middleware"
 	"github.com/gin-gonic/gin"
 )
@@ -15,11 +15,12 @@ func InitRouter() *gin.Engine {
 		auth.GET("/", func(ctx *gin.Context) {
 			ctx.JSON(200, gin.H{"code": 200, "msg": "hello,api"})
 		})
-		auth.GET("home", controllers.Home)
-		auth.GET("user", controllers.GetInfo)
+		auth.GET("home", handles.Home)
+		auth.GET("user", handles.GetInfo)
 	}
-	router.POST("/login", controllers.Login)
-	router.GET("/books/:id", controllers.BookList)
-	router.GET("users", controllers.Users)
+	router.POST("/login", handles.Login)
+	//router.GET("/books/:id", controllers.BookList)
+	router.GET("/books/:id", handles.GetList)
+	router.GET("users", handles.Users)
 	return router
 }
