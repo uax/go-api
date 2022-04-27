@@ -1,40 +1,19 @@
 package config
 
 import (
-	"encoding/json"
+	"fmt"
+	"gopkg.in/ini.v1"
 	"os"
 )
 
-type Db struct {
-	Address  string
-	DbName   string
-	User     string
-	Password string
-	Port     int
-}
+var Cfg *ini.File
 
-type MiniAPP struct {
-	AppId     string
-	AppSecret string
-}
-
-type Configuration struct {
-	DB      *Db
-	MiniAPP *MiniAPP
-}
-
-var ConfAll *Configuration
-
-func LoadConfig() error {
-	file, err := os.Open("config.json")
+func init() {
+	var err error
+	Cfg, err = ini.Load("config.ini")
 	if err != nil {
-		return err
+		fmt.Printf("Fail to read file: %v", err)
+		os.Exit(1)
 	}
-	decoder := json.NewDecoder(file)
-	ConfAll = &Configuration{}
-	err = decoder.Decode(ConfAll)
-	if err != nil {
-		return err
-	}
-	return nil
+	Cfg.BlockMode = false
 }

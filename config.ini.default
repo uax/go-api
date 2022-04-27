@@ -1,0 +1,22 @@
+app_mode = debug
+
+[db]
+# 数据库配置
+host = "127.0.0.1"
+database = "api"
+username = "root"
+password = "526937"
+port = 3306
+
+[miniapp]
+# 微信小程序配置
+appid = fdsafdasfds
+appsecret = fdsafdsaf
+[server]
+# Protocol (http or https)
+host_name = "127.0.0.1"
+host_port = 8000
+
+# Redirect to correct domain if host header does not match domain
+# Prevents DNS rebinding attacks
+enforce_domain = true

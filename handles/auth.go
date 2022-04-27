@@ -19,13 +19,17 @@ type Credential struct {
 
 func Login(c *gin.Context) {
 	var json Credential
-	c.BindJSON(&json)
+	err := c.BindJSON(&json)
+	if err != nil {
+		fmt.Println("get code error.")
+		return
+	}
 	//根据 code 获取 openid
 	wc := wechat.NewWechat()
 	memory := cache.NewMemory()
 	cfg := &miniConfig.Config{
-		AppID:     ConfAll.MiniAPP.AppId,
-		AppSecret: ConfAll.MiniAPP.AppSecret,
+		AppID:     Cfg.Section("miniapp").Key("appid").String(),
+		AppSecret: Cfg.Section("miniapp").Key("appsecret").String(),
 		Cache:     memory,
 	}
 	auth := wc.GetMiniProgram(cfg).GetAuth()

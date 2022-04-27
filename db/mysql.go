@@ -1,7 +1,7 @@
 package db
 
 import (
-	"api/config"
+	. "api/config"
 	"database/sql"
 	"fmt"
 	"time"
@@ -19,13 +19,13 @@ const (
 
 var ORM *gorm.DB
 
-func InitDb(conf *config.Db) error {
+func InitDb() error {
 	var err error
 	var sqlDb *sql.DB
 	ORM, err = gorm.Open(mysql.Open(
 		fmt.Sprintf(
-			Url, conf.User, conf.Password,
-			conf.Address, conf.Port, conf.DbName)), &gorm.Config{})
+			Url, Cfg.Section("db").Key("username").String(), Cfg.Section("db").Key("password").String(),
+			Cfg.Section("db").Key("host").String(), Cfg.Section("db").Key("port").MustInt(3306), Cfg.Section("db").Key("database").String())), &gorm.Config{})
 	if err != nil {
 		return err
 	}
