@@ -13,10 +13,12 @@ func InitRouter() *gin.Engine {
 	auth := router.Group("/").Use(middleware.JWTMiddleware())
 	{
 		auth.GET("/", handles.Home)
+		auth.GET("/home", handles.Home)
 		auth.GET("user", handles.GetInfo)
 	}
 	router.POST("/login", handles.Login)
-	router.GET("/books/:id", handles.GetList)
+	router.GET("/category/:id", handles.Category)
+	router.GET("/books/:id", handles.Show)
 	router.GET("users", handles.Users)
 	return router
 }

@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func GetList(c *gin.Context) {
+func Category(c *gin.Context) {
 	categoryId, _ := strconv.Atoi(c.Param("id"))
 
 	var p db.Page
@@ -49,5 +49,23 @@ func GetList(c *gin.Context) {
 		"data":  books,
 		"total": total,
 		"pages": pages,
+	})
+}
+
+func Show(c *gin.Context) {
+	bookId, _ := strconv.Atoi(c.Param("id"))
+	var book model.Book
+	result := db.ORM.Where("id = ?", bookId).First(&book)
+	if result.RowsAffected > 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"msg":  "ok",
+			"data": book,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": 500,
+		"msg":  result.Error.Error(),
 	})
 }
