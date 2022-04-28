@@ -5,18 +5,24 @@ import (
 )
 
 type User struct {
-	ID       int64  `json:"id"`
-	Openid   string `json:"openid"`
-	Name     string `json:"username"`
-	Password string `json:"password"`
+	Id              uint64 `json:"id"`
+	Name            string `json:"name"`
+	Openid          string `json:"openid"`
+	Avatar          string `json:"avatar"`
+	Email           string `json:"email"`
+	EmailVerifiedAt int64  `json:"email_verified_at"`
+	Password        string `json:"password"`
+	RememberToken   string `json:"remember_token"`
+	CreatedAt       int64  `json:"created_at"`
+	UpdatedAt       int64  `json:"updated_at"`
 }
 
 var Users []User
 
 //Insert insert user
-func (user User) Insert() (id int64, err error) {
+func (user User) Insert() (id uint64, err error) {
 	result := db.ORM.Create(&user)
-	id = user.ID
+	id = user.Id
 	if result.Error != nil {
 		err = result.Error
 		return

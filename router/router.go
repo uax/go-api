@@ -1,8 +1,11 @@
 package router
 
 import (
+	"api/db"
 	"api/handles"
 	"api/middleware"
+	model "api/models"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,5 +23,12 @@ func InitRouter() *gin.Engine {
 	router.GET("/category/:id", handles.Category)
 	router.GET("/books/:id", handles.Show)
 	router.GET("users", handles.Users)
+	router.GET("install", Install)
 	return router
+}
+
+func Install(c *gin.Context) {
+	if err := db.ORM.AutoMigrate(model.User{}); err != nil {
+		fmt.Println(err)
+	}
 }

@@ -8,6 +8,18 @@ import (
 	"strconv"
 )
 
+//APIBook 小说结构体
+type APIBook struct {
+	Id   uint64 `json:"id"`
+	Name string `json:"name"`
+}
+
+type APIShow struct {
+	Book     APIBook `json:"book"`
+	Chapters []int   `json:"chapters"`
+}
+
+//Category 获取分类列表
 func Category(c *gin.Context) {
 	categoryId, _ := strconv.Atoi(c.Param("id"))
 
@@ -52,15 +64,21 @@ func Category(c *gin.Context) {
 	})
 }
 
+//Show 获取小说详情
 func Show(c *gin.Context) {
 	bookId, _ := strconv.Atoi(c.Param("id"))
-	var book model.Book
-	result := db.ORM.Where("id = ?", bookId).First(&book)
+	book := APIBook{}
+	chapters := []int{1, 2, 3}
+	result := db.ORM.Debug().Model(&model.Book{}).Where("id = ?", bookId).First(&book)
 	if result.RowsAffected > 0 {
+		show := APIShow{
+			Book:     book,
+			Chapters: chapters,
+		}
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "ok",
-			"data": book,
+			"data": show,
 		})
 		return
 	}

@@ -9,7 +9,7 @@ import (
 )
 
 type MyClaims struct {
-	UID int64 `json:"uid"`
+	UID uint64 `json:"uid"`
 	jwt.StandardClaims
 }
 
@@ -18,7 +18,7 @@ const TokenExpireDuration = time.Hour * 1
 var MySecret = []byte("Noah")
 
 //GenerateToken generate token
-func GenerateToken(uid int64) (string, error) {
+func GenerateToken(uid uint64) (string, error) {
 	c := MyClaims{
 		uid,
 		jwt.StandardClaims{

@@ -48,7 +48,7 @@ func Login(c *gin.Context) {
 	var user models.User
 	res := db.ORM.Where("openid = ?", result.OpenID).First(&user)
 	if res.RowsAffected > 0 {
-		tokenString, _ := middleware.GenerateToken(user.ID)
+		tokenString, _ := middleware.GenerateToken(user.Id)
 		c.JSON(http.StatusOK, gin.H{
 			"code":  200,
 			"msg":   "ok",
