@@ -10,18 +10,19 @@ import (
 
 //APIBook 小说结构体
 type APIBook struct {
-	Id   uint64 `json:"id"`
-	Name string `json:"name"`
+	Id     uint64 `json:"id"`
+	Name   string `json:"name"`
+	Author string `json:"author"`
 }
 
 type APIShow struct {
-	Book     APIBook `json:"book"`
-	Chapters []int   `json:"chapters"`
+	Book     APIBook      `json:"book"`
+	Chapters []APIChapter `json:"chapters"`
 }
 
-//Category 获取分类列表
-func Category(c *gin.Context) {
-	categoryId, _ := strconv.Atoi(c.Param("id"))
+//BookList 获取分类小说列表
+func BookList(c *gin.Context) {
+	categoryId, _ := strconv.Atoi(c.Query("category_id"))
 
 	var p db.Page
 	if c.ShouldBindQuery(&p) != nil {
@@ -64,13 +65,16 @@ func Category(c *gin.Context) {
 	})
 }
 
-//Show 获取小说详情
-func Show(c *gin.Context) {
+//BookShow 获取小说详情
+func BookShow(c *gin.Context) {
 	bookId, _ := strconv.Atoi(c.Param("id"))
 	book := APIBook{}
-	chapters := []int{1, 2, 3}
+	//chapters := []int{1, 2, 3}
+	var chapters []APIChapter
+
 	result := db.ORM.Debug().Model(&model.Book{}).Where("id = ?", bookId).First(&book)
 	if result.RowsAffected > 0 {
+		db.ORM.Model(&model.Chapter{}).Debug().Order("id desc").Where("book_id = ?", bookId).Limit(10).Find(&chapters)
 		show := APIShow{
 			Book:     book,
 			Chapters: chapters,
