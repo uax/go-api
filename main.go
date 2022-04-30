@@ -3,7 +3,6 @@ package main
 import (
 	"api/config"
 	"api/db"
-
 	"api/router"
 	"github.com/gin-gonic/gin"
 	"log"

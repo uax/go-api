@@ -5,7 +5,6 @@ import (
 	"api/db"
 	"api/middleware"
 	"api/models"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/silenceper/wechat/v2"
 	"github.com/silenceper/wechat/v2/cache"
@@ -21,7 +20,10 @@ func Login(c *gin.Context) {
 	var json Credential
 	err := c.BindJSON(&json)
 	if err != nil {
-		fmt.Println("get code error.")
+		c.JSON(http.StatusOK, gin.H{
+			"code": 500,
+			"msg":  err.Error(),
+		})
 		return
 	}
 	//根据 code 获取 openid
@@ -42,12 +44,16 @@ func Login(c *gin.Context) {
 		return
 	}
 	if result.ErrCode != 0 {
-		fmt.Println("error" + result.ErrMsg)
+		c.JSON(http.StatusOK, gin.H{
+			"code": 500,
+			"msg":  result.ErrMsg,
+		})
 		return
 	}
-	var user models.User
-	res := db.ORM.Where("openid = ?", result.OpenID).First(&user)
-	if res.RowsAffected > 0 {
+
+	var user models.Auth
+	db.ORM.FirstOrCreate(&user, models.Auth{Openid: result.OpenID})
+	if user.Id > 0 {
 		tokenString, _ := middleware.GenerateToken(user.Id)
 		c.JSON(http.StatusOK, gin.H{
 			"code":  200,
@@ -58,7 +64,6 @@ func Login(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code": 500,
-		"msg":  res.Error.Error(),
+		"msg":  "error",
 	})
-	return
 }
